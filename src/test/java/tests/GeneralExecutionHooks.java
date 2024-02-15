@@ -1,4 +1,4 @@
-package configurations;
+package tests;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -9,34 +9,36 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 
-public class JunitExecutionHooks {
-    static Playwright playwright;
-    static Browser browser;
-
-    // New instance for each test method.
-    BrowserContext browserContext;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+abstract class GeneralExecutionHooks {
+    Playwright playwright;
+    Browser browser;
+    BrowserContext context;
     Page page;
 
     @BeforeAll
-    static void launchBrowser() {
+    void launchBrowser() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
     @AfterAll
-    static void closeBrowser() {
+    void closeBrowser() {
+        browser.close();
         playwright.close();
     }
 
     @BeforeEach
     void createContextAndPage() {
-        browserContext = browser.newContext();
-        page = browserContext.newPage();
+        context = browser.newContext();
+        page = context.newPage();
     }
 
     @AfterEach
     void closeContext() {
-        browserContext.close();
+        context.close();
+        page.close();
     }
 }
