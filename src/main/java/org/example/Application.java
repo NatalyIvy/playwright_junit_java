@@ -22,8 +22,10 @@ public class Application {
             browser.startTracing(page);
             page.navigate("https://playwright.dev/");
             assertThat(page).hasTitle(Pattern.compile("Playwright"));
+
             Locator getStartedButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Get Started"));
             assertThat(getStartedButton).hasAttribute("href", "/docs/intro");
+
             getStartedButton.click();
             assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Installation"))).isVisible();
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example.png")));

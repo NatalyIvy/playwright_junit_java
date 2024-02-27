@@ -1,13 +1,15 @@
-package tests;
+package org.example.tests;
 
 import com.microsoft.playwright.assertions.LocatorAssertions;
+import org.example.pom.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import pom.LoginPage;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -38,8 +40,9 @@ public class LoginTests extends GeneralExecutionHooks {
                 new LocatorAssertions.HasAttributeOptions().setIgnoreCase(true));
     }
 
-    @Test
     @Order(3)
+    @Tag("testTag")
+    @RepeatedTest(2)
     @DisplayName("Open Swag login page and try to login without data")
     void loginWithoutAccount() {
         loginPage.getLoginButton().click();
