@@ -1,5 +1,8 @@
-package tests;
+package org.example.tests;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -18,10 +21,18 @@ abstract class GeneralExecutionHooks {
     BrowserContext context;
     Page page;
 
+    ExtentReports extent;
+    ExtentTest test;
+
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+
+
+        extent = new ExtentReports();
+        ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter("extent-report.html");
+        extent.attachReporter(htmlReporter);
     }
 
     @AfterAll
@@ -34,11 +45,13 @@ abstract class GeneralExecutionHooks {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
+        test = extent.createTest("Test Case 1", "PASSED test case");
     }
 
     @AfterEach
     void closeContext() {
         context.close();
         page.close();
+        extent.flush();
     }
 }

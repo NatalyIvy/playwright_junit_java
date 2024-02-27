@@ -1,4 +1,4 @@
-package pom;
+package org.example.pom;
 
 
 import com.microsoft.playwright.Locator;
