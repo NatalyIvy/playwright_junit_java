@@ -1,38 +1,30 @@
 package org.example.tests;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.Tracing;
+import io.qameta.allure.Allure;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.TestWatcher;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class GeneralExecutionHooks {
+abstract class GeneralExecutionHooks implements TestWatcher {
     Playwright playwright;
     Browser browser;
     BrowserContext context;
     Page page;
 
-    ExtentReports extent;
-    ExtentTest test;
-
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-
-
-        extent = new ExtentReports();
-        ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter("extent-report.html");
-        extent.attachReporter(htmlReporter);
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
     @AfterAll
@@ -45,13 +37,18 @@ abstract class GeneralExecutionHooks {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
-        test = extent.createTest("Test Case 1", "PASSED test case");
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true));
     }
 
     @AfterEach
     void closeContext() {
+        Allure.getLifecycle().addAttachment(
+                "After test screenshot", "image/png", "png",
+                page.screenshot(new Page.ScreenshotOptions().setFullPage(true))
+        );
         context.close();
         page.close();
-        extent.flush();
     }
 }

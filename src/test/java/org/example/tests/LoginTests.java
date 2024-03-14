@@ -1,6 +1,11 @@
 package org.example.tests;
 
 import com.microsoft.playwright.assertions.LocatorAssertions;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.example.pom.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +34,10 @@ public class LoginTests extends GeneralExecutionHooks {
     @Test
     @Order(1)
     @DisplayName("Open Swag login page and assert page elements")
+    @Epic("SWAG login validations")
+    @Feature("Login page")
+    @Description("Open Swag login page and assert page elements")
+    @Severity(SeverityLevel.CRITICAL)
     void openLoginAndAssertWebElements() {
         assertThat(page).hasTitle(PAGE_TITLE);
         assertThat(loginPage.getUsernameInput()).isVisible();
@@ -44,6 +53,9 @@ public class LoginTests extends GeneralExecutionHooks {
     @Tag("testTag")
     @RepeatedTest(2)
     @DisplayName("Open Swag login page and try to login without data")
+    @Epic("SWAG login validations")
+    @Feature("Login page")
+    @Severity(SeverityLevel.CRITICAL)
     void loginWithoutAccount() {
         loginPage.getLoginButton().click();
         assertThat(loginPage.getError()).hasText("Epic sadface: Username is required");
@@ -53,6 +65,9 @@ public class LoginTests extends GeneralExecutionHooks {
     @Test
     @Order(2)
     @DisplayName("Open Swag login page and login with existing account")
+    @Epic("SWAG login validations")
+    @Feature("Login page")
+    @Severity(SeverityLevel.CRITICAL)
     void login() {
         loginPage.getUsernameInput().fill("standard_user");
         loginPage.getPasswordInput().fill("secret_sauce");
