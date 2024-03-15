@@ -1,12 +1,15 @@
 package org.example.tests;
 
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import org.example.config.GeneralExecutionHooks;
 import org.example.pom.LoginPage;
+import org.example.steps.LoginPageSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -20,30 +23,29 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 @TestMethodOrder(OrderAnnotation.class)
 @DisplayName("Swag Labs login page tests")
+@Feature("Login page")
+@Epic("SWAG login validations")
 public class LoginTests extends GeneralExecutionHooks {
-    LoginPage loginPage;
+    LoginPageSteps loginPageSteps;
 
     private static final String PAGE_TITLE = "Swag Labs";
 
     @BeforeEach
-    void navigate() {
-        loginPage = new LoginPage(page);
-        loginPage.navigateTo();
+    void init() {
+        loginPageSteps = new LoginPageSteps(page);
+        loginPageSteps.navigate();
     }
 
     @Test
     @Order(1)
     @DisplayName("Open Swag login page and assert page elements")
-    @Epic("SWAG login validations")
-    @Feature("Login page")
     @Description("Open Swag login page and assert page elements")
     @Severity(SeverityLevel.CRITICAL)
     void openLoginAndAssertWebElements() {
         assertThat(page).hasTitle(PAGE_TITLE);
-        assertThat(loginPage.getUsernameInput()).isVisible();
-        assertThat(loginPage.getUsernameInput()).hasAttribute("placeholder", "Username");
-
-        assertThat(loginPage.getPasswordInput()).hasAttribute(
+        assertThat(loginPageSteps.ui.getUsernameInput()).isVisible();
+        assertThat(loginPageSteps.ui.getUsernameInput()).hasAttribute("placeholder", "Username");
+        assertThat(loginPageSteps.ui.getPasswordInput()).hasAttribute(
                 "placeholder",
                 "password",
                 new LocatorAssertions.HasAttributeOptions().setIgnoreCase(true));
@@ -53,25 +55,20 @@ public class LoginTests extends GeneralExecutionHooks {
     @Tag("testTag")
     @RepeatedTest(2)
     @DisplayName("Open Swag login page and try to login without data")
-    @Epic("SWAG login validations")
-    @Feature("Login page")
+
+
     @Severity(SeverityLevel.CRITICAL)
     void loginWithoutAccount() {
-        loginPage.getLoginButton().click();
-        assertThat(loginPage.getError()).hasText("Epic sadface: Username is required");
+        loginPageSteps.ui.getLoginButton().click();
+        assertThat(loginPageSteps.ui.getError()).hasText("Epic sadface: Username is required");
         assertThat(page).hasTitle(PAGE_TITLE);
     }
 
     @Test
     @Order(2)
     @DisplayName("Open Swag login page and login with existing account")
-    @Epic("SWAG login validations")
-    @Feature("Login page")
     @Severity(SeverityLevel.CRITICAL)
     void login() {
-        loginPage.getUsernameInput().fill("standard_user");
-        loginPage.getPasswordInput().fill("secret_sauce");
-        loginPage.getLoginButton().click();
-        assertThat(loginPage.getUsernameInput()).not().isVisible();
+        loginPageSteps.loginAsStandardUser();
     }
 }

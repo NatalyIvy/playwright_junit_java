@@ -11,11 +11,12 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <playwright.version>1.41.2</playwright.version>
+        <playwright.version>1.42.0</playwright.version>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <lombok.version>1.18.30</lombok.version>
         <allure.version>2.25.0</allure.version>
         <aspectj.version>1.9.21.1</aspectj.version>
+        <slf4j.version>2.0.12</slf4j.version>
 
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.site.plugin.version>3.8.2</maven.site.plugin.version>
@@ -60,12 +61,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- SLF4J-API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
         <!-- ALLURE-JUNIT5 -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
             <!-- No need to specify version , you have BOM manager-->
-            <scope>test</scope>
         </dependency>
 
         <!-- ASPECTJ RUNTIME -->
