@@ -2,21 +2,20 @@ package org.example.pom;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 import lombok.Getter;
+import org.example.pom.bloks.ProductCard;
 
 import java.util.List;
-import java.util.Objects;
 
 @Getter
-public class ProductsPage {
-    private final Page page;
-    Locator filter;
+public class ProductsPage extends BasePage {
 
-    public ProductsPage(Page page) {
-        Objects.requireNonNull(page, "Page should exist");
-        this.page = page;
-        this.filter = page.locator(".select_container");
+    Locator filter = pw.locator(".select_container");
+    Locator productBlocks = pw.locator(".inventory_item");
+    Locator blockTitle = pw.locator(".inventory_item_label");
+
+    public ProductsPage(Page pw) {
+        super(pw);
     }
 
     public String getFilterSelectedOption() {
@@ -25,5 +24,15 @@ public class ProductsPage {
 
     public List<String> getFilterOptions() {
         return filter.locator("option").allTextContents();
+    }
+
+    public ProductCard getProductBlockByName(String name) {
+        Locator cardLocator = productBlocks.filter(new Locator.FilterOptions().setHas(blockTitle).setHasText(name))
+                .first();
+        if (cardLocator != null) {
+            return new ProductCard(cardLocator);
+        } else {
+            throw new RuntimeException("Product card with name '" + name + "' not found.");
+        }
     }
 }

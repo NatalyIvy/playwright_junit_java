@@ -1,14 +1,11 @@
 package org.example.tests;
 
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.assertions.LocatorAssertions;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
-import org.example.config.GeneralExecutionHooks;
-import org.example.pom.LoginPage;
+import org.example.config.TestBase;
 import org.example.steps.LoginPageSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,13 +16,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
 @TestMethodOrder(OrderAnnotation.class)
-@DisplayName("Swag Labs login page tests")
-@Feature("Login page")
 @Epic("SWAG login validations")
-public class LoginTests extends GeneralExecutionHooks {
+@Feature("Login page")
+@DisplayName("Swag Labs login page tests")
+public class LoginTests extends TestBase {
     LoginPageSteps loginPageSteps;
 
     private static final String PAGE_TITLE = "Swag Labs";
@@ -38,30 +33,23 @@ public class LoginTests extends GeneralExecutionHooks {
 
     @Test
     @Order(1)
-    @DisplayName("Open Swag login page and assert page elements")
     @Description("Open Swag login page and assert page elements")
     @Severity(SeverityLevel.CRITICAL)
     void openLoginAndAssertWebElements() {
-        assertThat(page).hasTitle(PAGE_TITLE);
-        assertThat(loginPageSteps.ui.getUsernameInput()).isVisible();
-        assertThat(loginPageSteps.ui.getUsernameInput()).hasAttribute("placeholder", "Username");
-        assertThat(loginPageSteps.ui.getPasswordInput()).hasAttribute(
-                "placeholder",
-                "password",
-                new LocatorAssertions.HasAttributeOptions().setIgnoreCase(true));
+        loginPageSteps.assertTitle(PAGE_TITLE);
+        loginPageSteps.validateUsernamePlaceholder("Username");
+        loginPageSteps.validatePasswordPlaceholder("password");
     }
 
     @Order(3)
     @Tag("testTag")
     @RepeatedTest(2)
     @DisplayName("Open Swag login page and try to login without data")
-
-
     @Severity(SeverityLevel.CRITICAL)
     void loginWithoutAccount() {
-        loginPageSteps.ui.getLoginButton().click();
-        assertThat(loginPageSteps.ui.getError()).hasText("Epic sadface: Username is required");
-        assertThat(page).hasTitle(PAGE_TITLE);
+        loginPageSteps.ui.clickOnLoginButton();
+        loginPageSteps.validateLoginPageError("Epic sadface: Username is required");
+        loginPageSteps.assertTitle(PAGE_TITLE);
     }
 
     @Test

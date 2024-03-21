@@ -1,6 +1,7 @@
 package org.example.steps;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.assertions.LocatorAssertions;
 import io.qameta.allure.Step;
 import org.example.pom.LoginPage;
 
@@ -8,17 +9,23 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 public class LoginPageSteps {
     public final LoginPage ui;
-
-    private static final String STANDARD_USERNAME = "standard_user";
-    private static final String STANDARD_USER_PASS = "secret_sauce";
-
     public LoginPageSteps(Page pwPage) {
         this.ui = new LoginPage(pwPage);
     }
 
+    private static final String STANDARD_USERNAME = "standard_user";
+    private static final String STANDARD_USER_PASS = "secret_sauce";
+    private static final String PATH = "https://www.saucedemo.com/";
+
     @Step("Navigate to SWAG login")
     public void navigate() {
-        ui.pw.navigate("https://www.saucedemo.com/");
+        ui.pw.navigate(PATH);
+    }
+
+    @Step("OpenSwag and login as standard user")
+    public void openUrlAndLoginAsStandardUser() {
+        navigate();
+        loginAsStandardUser();
     }
 
     @Step("Insert standard username and password, validate login input is not visible any more")
@@ -27,5 +34,27 @@ public class LoginPageSteps {
         ui.getPasswordInput().fill(STANDARD_USER_PASS);
         ui.getLoginButton().click();
         assertThat(ui.getUsernameInput()).not().isVisible();
+    }
+
+    @Step("Validate Login page has [{title}] title ")
+    public void assertTitle(String title) {
+        assertThat(ui.pw).hasTitle(title);
+    }
+
+    @Step("Validate on Login page the user name input is visible and has placeholder [{placeholder}]")
+    public void validateUsernamePlaceholder(String placeholder) {
+        assertThat(ui.getUsernameInput()).isVisible();
+        assertThat(ui.getUsernameInput()).hasAttribute("placeholder", placeholder);
+    }
+
+    @Step("Validate on Login page the password input is visible and has placeholder [{placeholder}]")
+    public void validatePasswordPlaceholder(String placeholder) {
+        assertThat(ui.getPasswordInput()).hasAttribute("placeholder", placeholder,
+                new LocatorAssertions.HasAttributeOptions().setIgnoreCase(true));
+    }
+
+    @Step("Validate on Login page the error is [{error}]")
+    public void validateLoginPageError(String error) {
+        assertThat(ui.getError()).hasText(error);
     }
 }

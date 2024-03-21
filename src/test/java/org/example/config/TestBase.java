@@ -12,13 +12,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class GeneralExecutionHooks {
+@ExtendWith(TestListener.class)
+public abstract class TestBase {
     protected Playwright playwright;
     protected Browser browser;
     protected BrowserContext context;
-    protected Page page;
+    protected static Page page;
 
     @BeforeAll
     void launchBrowser() {
@@ -43,11 +45,14 @@ public abstract class GeneralExecutionHooks {
 
     @AfterEach
     void closeContext() {
+        context.close();
+        page.close();
+    }
+
+    public static void takeScreenShot(String description) {
         Allure.getLifecycle().addAttachment(
-                "After test screenshot", "image/png", "png",
+                description + " screenshot", "image/png", "png",
                 page.screenshot(new Page.ScreenshotOptions().setFullPage(true))
         );
-        context.close();
-        //page.close(); ?
     }
 }
