@@ -27,7 +27,7 @@ public class LoginTests extends TestBase {
 
     @BeforeEach
     void init() {
-        loginPageSteps = new LoginPageSteps(page);
+        loginPageSteps = new LoginPageSteps(getPage());
         loginPageSteps.navigate();
     }
 
@@ -35,7 +35,7 @@ public class LoginTests extends TestBase {
     @Order(1)
     @Description("Open Swag login page and assert page elements")
     @Severity(SeverityLevel.CRITICAL)
-    void openLoginAndAssertWebElements() {
+    synchronized void openLoginAndAssertWebElements() {
         loginPageSteps.assertTitle(PAGE_TITLE);
         loginPageSteps.validateUsernamePlaceholder("Username");
         loginPageSteps.validatePasswordPlaceholder("password");
@@ -46,7 +46,7 @@ public class LoginTests extends TestBase {
     @RepeatedTest(2)
     @DisplayName("Open Swag login page and try to login without data")
     @Severity(SeverityLevel.CRITICAL)
-    void loginWithoutAccount() {
+    synchronized void loginWithoutAccount() {
         loginPageSteps.ui.clickOnLoginButton();
         loginPageSteps.validateLoginPageError("Epic sadface: Username is required");
         loginPageSteps.assertTitle(PAGE_TITLE);
@@ -56,7 +56,7 @@ public class LoginTests extends TestBase {
     @Order(2)
     @DisplayName("Open Swag login page and login with existing account")
     @Severity(SeverityLevel.CRITICAL)
-    void login() {
+    synchronized void login() {
         loginPageSteps.loginAsStandardUser();
     }
 }

@@ -7,7 +7,7 @@ public class TestListener implements AfterTestExecutionCallback {
 
     @Override
     public void afterTestExecution(ExtensionContext context) {
-        // check the context for an exception
+        // check the browserContext for an exception
         boolean passed = context.getExecutionException().isEmpty();
         if (!passed) {
             TestBase.takeScreenShot("FAIL step");
