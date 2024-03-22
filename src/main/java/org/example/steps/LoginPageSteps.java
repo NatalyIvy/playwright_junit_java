@@ -3,6 +3,7 @@ package org.example.steps;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import io.qameta.allure.Step;
+import org.example.helpers.PropertiesAccessor;
 import org.example.pom.LoginPage;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -13,9 +14,9 @@ public class LoginPageSteps {
         this.ui = new LoginPage(pwPage);
     }
 
-    private static final String STANDARD_USERNAME = "standard_user";
-    private static final String STANDARD_USER_PASS = "secret_sauce";
-    private static final String PATH = "https://www.saucedemo.com/";
+    private static final String STANDARD_USERNAME = PropertiesAccessor.getInstance().values().getStandardUsername();
+    private static final String STANDARD_USER_PASS = PropertiesAccessor.getInstance().values().getStandardPassword();
+    private static final String PATH = PropertiesAccessor.getInstance().values().getBaseUrl();
 
     @Step("Navigate to SWAG login")
     public void navigate() {
