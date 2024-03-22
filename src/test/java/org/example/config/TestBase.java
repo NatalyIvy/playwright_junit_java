@@ -7,6 +7,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
 import io.qameta.allure.Allure;
+import lombok.SneakyThrows;
+import org.example.helpers.PropertiesAccessor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,10 +24,14 @@ public abstract class TestBase {
     protected BrowserContext context;
     protected static Page page;
 
+    private static final String BROWSER_TYPE = PropertiesAccessor.getInstance().values().getBrowserType();
+    private static final boolean HEADLESS_MODE = PropertiesAccessor.getInstance().values().getHeadlessMode();
+
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        BrowserType browserType = getBrowserType(playwright);
+        browser = browserType.launch(new BrowserType.LaunchOptions().setHeadless(HEADLESS_MODE));
     }
 
     @AfterAll
@@ -47,6 +53,16 @@ public abstract class TestBase {
     void closeContext() {
         context.close();
         page.close();
+    }
+
+    @SneakyThrows
+    private static synchronized BrowserType getBrowserType(Playwright playwright) {
+        return switch (TestBase.BROWSER_TYPE) {
+            case "chromium" -> playwright.chromium();
+            case "webkit" -> playwright.webkit();
+            case "firefox" -> playwright.firefox();
+            default -> throw new IllegalAccessException("Indicate valid browser name: [chromium, webkit, firefox]");
+        };
     }
 
     public static void takeScreenShot(String description) {
