@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class TestClass {
 
     @ParameterizedTest
-    @ValueSource(strings = {"nothing", "what does it mean", "What a day!"})
+    @ValueSource(strings = {"nothing what", "what does it mean", "what a day!"})
     void parametrized(String candidate) {
         Assertions.assertTrue(candidate.contains("what"));
     }
