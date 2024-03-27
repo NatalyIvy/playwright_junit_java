@@ -2,10 +2,12 @@ package org.example.pom;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import lombok.Getter;
 import org.example.pom.bloks.ProductCard;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Getter
 public class ProductsPage extends BasePage {
@@ -32,7 +34,11 @@ public class ProductsPage extends BasePage {
         if (cardLocator != null) {
             return new ProductCard(cardLocator);
         } else {
-            throw new RuntimeException("Product card with name '" + name + "' not found.");
+            throw new NoSuchElementException("Product card with name '" + name + "' not found.");
         }
+    }
+
+    public void clickOnBlockTitleByIndex(int index) {
+        blockTitle.getByRole(AriaRole.LINK).all().get(index).click();
     }
 }

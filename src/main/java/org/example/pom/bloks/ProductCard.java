@@ -10,6 +10,7 @@ public class ProductCard extends BaseComponent {
     Locator descriptionLocator = root.locator(".inventory_item_desc");
     Locator priceLocator = root.locator(".inventory_item_price");
     Locator addToCartButton = root.getByRole(AriaRole.BUTTON);
+    Locator productName = root.locator("[data-test='inventory-item-name']");
 
     public ProductCard(Locator locator) {
         super(locator);
