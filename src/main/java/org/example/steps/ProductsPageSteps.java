@@ -50,4 +50,15 @@ public class ProductsPageSteps {
         ProductCard productCard = ui.getProductBlockByName(productName);
         assertThat(productCard.getAddToCartButton().textContent()).isEqualTo(ADD_TO_CART_BUTTON_NAME);
     }
+
+    @Step("Click on product by name [{productName}]")
+    public void clickOnProductByName(String productName) {
+        ProductCard productCard = ui.getProductBlockByName(productName);
+        productCard.getProductName().click();
+    }
+
+    @Step("Click on product by index [{index}]")
+    public void clickOnProductByIndex(int index) {
+        ui.clickOnBlockTitleByIndex(index);
+    }
 }

@@ -2,7 +2,7 @@ package org.example.helpers;
 
 import org.aeonbits.owner.Config;
 
-@Config.Sources("file:src/test/resources/application.properties")
+@Config.Sources({"classpath:application.properties"})
 public interface AppPropertyMapper extends Config {
 
     @Key("base_url")

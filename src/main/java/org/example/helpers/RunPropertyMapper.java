@@ -2,7 +2,7 @@ package org.example.helpers;
 
 import org.aeonbits.owner.Config;
 
-@Config.Sources("file:src/test/resources/run.properties")
+@Config.Sources({"classpath:run.properties"})
 public interface RunPropertyMapper extends Config {
 
     @Key("browser_type")
@@ -10,6 +10,6 @@ public interface RunPropertyMapper extends Config {
     String getBrowserType();
 
     @Key("headless_mode")
-    @DefaultValue("true")
+    @DefaultValue("false")
     boolean getHeadlessMode();
 }
