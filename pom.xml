@@ -8,36 +8,45 @@
     <artifactId>PlayWrightSandBox</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <environment>local</environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <environment>test</environment>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
+        <!-- DEFAULT ENVIRONMENT-->
+        <environment>local</environment>
+        <tags/>
+
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <playwright.version>1.42.0</playwright.version>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <lombok.version>1.18.30</lombok.version>
         <allure.version>2.25.0</allure.version>
-        <aspectj.version>1.9.21.1</aspectj.version>
+        <aspectj.version>1.9.22</aspectj.version>
         <slf4j.version>2.0.12</slf4j.version>
         <assertj.version>3.25.3</assertj.version>
         <owner.version>1.0.12</owner.version>
+        <junit.reporting.version>1.10.2</junit.reporting.version>
+        <logback.version>1.5.6</logback.version>
+        <java.logback.version>5.2.2</java.logback.version>
 
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.site.plugin.version>3.8.2</maven.site.plugin.version>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
         <allure-maven.version>2.12.0</allure-maven.version>
     </properties>
-
-    <!-- Add allure-bom to dependency management to ensure correct versions of all the dependencies are used -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-bom</artifactId>
-                <version>${allure.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- PLAYWRIGHT -->
@@ -54,6 +63,13 @@
             <version>${junit.jupiter.version}</version>
         </dependency>
 
+        <!--JUNIT XML-->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-reporting</artifactId>
+            <version>${junit.reporting.version}</version>
+        </dependency>
+
         <!-- LOMBOK -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -67,13 +83,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-
-        <!-- ALLURE-JUNIT5 -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <!-- No need to specify version , you have BOM manager-->
         </dependency>
 
         <!-- ASPECTJ RUNTIME -->
@@ -97,7 +106,32 @@
             <version>${owner.version}</version>
         </dependency>
 
+        <!-- LOGBACK -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
 
+        <!-- LOGGER-JAVA-LOGBACK -->
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>logger-java-logback</artifactId>
+            <version>${java.logback.version}</version>
+        </dependency>
+
+        <!-- REPORTPORTAL/AGENT-JAVA-JUNIT5 -->
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-junit5</artifactId>
+            <version>5.3.2</version>
+        </dependency>
+        <!-- For nested steps only -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -107,17 +141,21 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <environment>${environment}</environment>
+                    </systemPropertyVariables>
+                    <groups>${tags}</groups>
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.extensions.autodetection.enabled = true
+                            junit.platform.reporting.output.dir = target/surefire-reports
+                        </configurationParameters>
+                    </properties>
+                    <!-- For nested steps only -->
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjweaver</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -133,16 +171,19 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
-                    <resultsDirectory>allure-results</resultsDirectory>
-                </configuration>
-            </plugin>
 
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <outputName>PW-surefire-report</outputName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
