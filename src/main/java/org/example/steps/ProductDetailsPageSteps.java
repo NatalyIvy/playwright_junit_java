@@ -1,9 +1,9 @@
 package org.example.steps;
 
+import com.epam.reportportal.annotations.Step;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.assertions.LocatorAssertions.HasTextOptions;
-import io.qameta.allure.Step;
 import org.example.pom.ProductDetailsPage;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;

@@ -1,4 +1,4 @@
-package org.example.helpers;
+package org.example.helpers.env;
 
 import org.aeonbits.owner.ConfigCache;
 

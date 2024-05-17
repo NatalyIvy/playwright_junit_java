@@ -1,12 +1,11 @@
-package org.example.helpers;
+package org.example.helpers.env;
 
 import org.aeonbits.owner.Config;
 
-@Config.Sources({"classpath:application.properties"})
+@Config.Sources({"file:src/test/resources/env/${environment}/application.properties"})
 public interface AppPropertyMapper extends Config {
 
     @Key("base_url")
-    @DefaultValue("https://www.saucedemo.com")
     String getBaseUrl();
 
     @Key("standard_user_name")

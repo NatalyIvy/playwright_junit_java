@@ -1,7 +1,7 @@
 package org.example.steps;
 
+import com.epam.reportportal.annotations.Step;
 import com.microsoft.playwright.Page;
-import io.qameta.allure.Step;
 import org.example.pom.ProductsPage;
 import org.example.pom.bloks.ProductCard;
 
