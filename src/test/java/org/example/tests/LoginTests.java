@@ -31,11 +31,11 @@ public class LoginTests extends TestBase {
   @Order(1)
   @DisplayName("Open Swag login page and assert page elements")
   void openLoginAndAssertWebElements() {
-    LOGGER.info("hello");
+    //LOGGER.info("hello");
     loginPageSteps.assertTitle(PAGE_TITLE);
     loginPageSteps.validateUsernamePlaceholder("Username");
     loginPageSteps.validatePasswordPlaceholder("password");
-    LOGGER.info("User is not logged in");
+    //LOGGER.info("User is not logged in");
   }
 
   @Order(3)

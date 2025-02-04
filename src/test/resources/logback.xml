@@ -1,59 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
     <property name="LOGS" value="./logs"/>
     <property name="LEVEL" value="INFO"/>
 
-    <!-- Send debug messages to System.out -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{5} - %thread - %msg%n</pattern>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{yyyy-MM-dd} | %d{HH:mm:ss.SSS} | %thread | %-5level | %X{RequestID} -
+                %msg%n
+            </pattern>
         </encoder>
     </appender>
 
+    <!-- RollingFileAppender with TimeBasedRollingPolicy -->
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>${LEVEL}</level>
-        </filter>
         <file>${LOGS}/atf.log</file>
-        <encoder
-                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
-        </encoder>
-
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily and when the file reaches 10 MegaBytes -->
-            <fileNamePattern>${LOGS}/archived/atf-%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>25MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Archive file name pattern -->
+            <fileNamePattern>${LOGS}/atf-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- Maximum size for each file -->
+            <maxFileSize>25MB</maxFileSize>
+            <!-- Maximum number of archive files to keep -->
+            <maxHistory>20</maxHistory>
         </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
     </appender>
 
     <appender name="RP" class="com.epam.reportportal.logback.appender.ReportPortalAppender">
-        <encoder>
-            <!--Best practice: don't put time and logging level to the final message. Appender do this for you-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n</pattern>
             <pattern>[%t] - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- We turned off framework logging by setting root level="WARN" to avoid logging encoded data into console. By setting level="TRACE"
-         for "binary_data_logger" and connected it only to RP appender to log that data to ReportPortal. The 'additivity' flag is important!
-         Without it logback will double-log log messages -->
+    <!--'additivity' flag is important! Without it logback will double-log log messages-->
     <logger name="binary_data_logger" level="TRACE" additivity="false">
         <appender-ref ref="RP"/>
     </logger>
+
     <logger name="com.epam.reportportal.example" level="TRACE"/>
 
-    <!-- By default, the level of the root level is set to DEBUG -->
     <root level="INFO">
-        <appender-ref ref="RP"/>
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="RollingFile"/>
+        <appender-ref ref="RP"/>
     </root>
 
 </configuration>
